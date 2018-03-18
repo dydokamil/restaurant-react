@@ -35,6 +35,9 @@ class Navigation extends React.Component {
             </li>
           )}
           {this.state.authenticated && (
+            <li>Signed in as {this.props.session.username}</li>
+          )}
+          {this.state.authenticated && (
             <li>
               <SignOutButton />
             </li>

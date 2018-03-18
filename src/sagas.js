@@ -5,8 +5,7 @@ import * as actions from './constants/actions'
 
 const ROOT_URL = 'http://localhost:3000'
 
-// login saga
-
+// v login saga v //
 // watcher
 export function * loginWatcher () {
   yield takeEvery(actions.LOGIN_REQUEST, loginWorker)
@@ -27,8 +26,27 @@ export const login = credentials => {
   return axios.post(`${ROOT_URL}/users/login`, { ...credentials })
 }
 
-// /login saga
+// ^ login saga> ^ //
+
+// v signup saga v //
+export function * signupWatcher () {
+  yield takeEvery(actions.SIGNUP_REQUEST, signupWorker)
+}
+
+export function * signupWorker ({ credentials }) {
+  try {
+    const session = yield call(signup, credentials)
+    yield put({ type: actions.SIGNUP_SUCCESS, session })
+  } catch (error) {
+    yield put({ type: actions.SIGNUP_FAILURE, error })
+  }
+}
+
+export const signup = credentials => {
+  return axios.post(`${ROOT_URL}/users`, { ...credentials })
+}
+// ^ signup saga ^ //
 
 export default function * rootSaga () {
-  yield all([loginWatcher()])
+  yield all([loginWatcher(), signupWatcher()])
 }
