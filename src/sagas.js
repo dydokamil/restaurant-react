@@ -26,7 +26,7 @@ export const login = credentials => {
   return axios.post(`${ROOT_URL}/users/login`, { ...credentials })
 }
 
-// ^ login saga> ^ //
+// ^ login saga ^ //
 
 // v signup saga v //
 export function * signupWatcher () {
@@ -47,6 +47,25 @@ export const signup = credentials => {
 }
 // ^ signup saga ^ //
 
+// v fetch tables saga v //
+export function * tablesWatcher () {
+  yield takeEvery(actions.TABLES_REQUEST, tablesWorker)
+}
+
+export function * tablesWorker () {
+  try {
+    const tables = yield call(fetchTables)
+    yield put({ type: actions.TABLES_SUCCESS, tables })
+  } catch (error) {
+    yield put({ type: actions.TABLES_FAILURE, error })
+  }
+}
+
+export const fetchTables = () => {
+  return axios.get(`${ROOT_URL}/reservations/available`)
+}
+// ^ fetch tables saga ^ //
+
 export default function * rootSaga () {
-  yield all([loginWatcher(), signupWatcher()])
+  yield all([loginWatcher(), signupWatcher(), tablesWatcher()])
 }

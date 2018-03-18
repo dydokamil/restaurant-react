@@ -42,6 +42,9 @@ class Navigation extends React.Component {
               <SignOutButton />
             </li>
           )}
+          <li>
+            <Link to={routes.TABLES}>Tables</Link>
+          </li>
         </ul>
       </div>
     )
