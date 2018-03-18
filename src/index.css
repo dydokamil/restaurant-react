@@ -3,3 +3,8 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.container {
+  margin-left: 5%;
+  margin-right: 5%;
+}
