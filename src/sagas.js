@@ -116,12 +116,38 @@ export const fetchMyReservation = token => {
 }
 // ^ fetch my reservation ^ //
 
+// v invite a user v //
+export function * inviteUserWatcher () {
+  yield takeEvery(actions.INVITE_REQUEST, inviteUserWorker)
+}
+
+export function * inviteUserWorker ({ payload }) {
+  try {
+    const reservation = yield call(inviteUser, payload)
+    yield put({ type: actions.INVITE_SUCCESS, reservation })
+  } catch (error) {
+    yield put({
+      type: actions.INVITE_FAILURE,
+      error
+    })
+  }
+}
+
+export const inviteUser = payload =>
+  axios.post(
+    `${ROOT_URL}/reservations/${payload.id}/invite`,
+    { guest: payload.guest },
+    { headers: { 'x-access-token': payload.token } }
+  )
+// ^ invite a user ^ //
+
 export default function * rootSaga () {
   yield all([
     loginWatcher(),
     signupWatcher(),
     tablesWatcher(),
     makeReservationWatcher(),
-    fetchMyReservationWatcher()
+    fetchMyReservationWatcher(),
+    inviteUserWatcher()
   ])
 }

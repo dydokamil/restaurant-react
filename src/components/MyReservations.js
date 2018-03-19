@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import Invitation from './Invitation'
 import * as actions from '../constants/actions'
 
 class MyReservations extends React.Component {
@@ -8,10 +9,6 @@ class MyReservations extends React.Component {
     if (this.props.session.token) {
       this.props.onFetchMyReservation(this.props.session.token)
     }
-  }
-
-  componentWillReceiveProps = props => {
-    console.log('New props', props)
   }
 
   render () {
@@ -24,7 +21,12 @@ class MyReservations extends React.Component {
     return (
       <div className="container">
         {error && <div>{error}</div>}
-        {reservation && <ReservationDetails reservation={reservation} />}
+        {reservation && (
+          <ReservationDetails
+            session={this.props.session}
+            reservation={reservation}
+          />
+        )}
       </div>
     )
   }
@@ -39,12 +41,19 @@ const ReservationDetails = props => (
       Guests:{' '}
       {props.reservation.guests.length > 0 ? (
         <ul>
-          props.reservation.guests.map(guest => <li>guest.id</li>)
+          {props.reservation.guests.map(guest => <li key={guest}>{guest}</li>)}
         </ul>
       ) : (
         'No guests'
       )}
     </div>
+
+    {props.session.id === props.reservation.user &&
+      props.reservation.guests.length < 4 && (
+      <Invitation reservationId={props.reservation._id} />
+    )}
+
+    <hr />
   </React.Fragment>
 )
 
