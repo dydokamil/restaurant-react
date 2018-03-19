@@ -11,6 +11,11 @@ class MyReservations extends React.Component {
     }
   }
 
+  kick = (reservation, guest) => {
+    const payload = { reservation, guest, token: this.props.session.token }
+    this.props.onKick(payload)
+  }
+
   render () {
     if (!this.props.session.token) {
       return <div className="container">Plase sign in.</div>
@@ -25,6 +30,7 @@ class MyReservations extends React.Component {
           <ReservationDetails
             session={this.props.session}
             reservation={reservation}
+            kick={this.kick}
           />
         )}
       </div>
@@ -41,7 +47,20 @@ const ReservationDetails = props => (
       Guests:{' '}
       {props.reservation.guests.length > 0 ? (
         <ul>
-          {props.reservation.guests.map(guest => <li key={guest}>{guest}</li>)}
+          {props.reservation.guests.map(guest => (
+            <li key={guest}>
+              <div>
+                {guest}{' '}
+                {props.session.id === props.reservation.user && (
+                  <button
+                    onClick={() => props.kick(props.reservation._id, guest)}
+                  >
+                    Kick
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
       ) : (
         'No guests'
@@ -67,6 +86,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   onFetchMyReservation: token => {
     dispatch({ type: actions.FETCH_MY_RESERVATION_REQUEST, token })
+  },
+  onKick: payload => {
+    dispatch({ type: actions.KICK_REQUEST, payload })
   }
 })
 

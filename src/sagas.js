@@ -141,6 +141,33 @@ export const inviteUser = payload =>
   )
 // ^ invite a user ^ //
 
+// v kick a user v //
+export function * kickUserWatcher () {
+  yield takeEvery(actions.KICK_REQUEST, kickUserWorker)
+}
+
+export function * kickUserWorker ({ payload }) {
+  try {
+    const reservation = yield call(kickUser, payload)
+    yield put({
+      type: actions.KICK_SUCCESS,
+      reservation
+    })
+  } catch (error) {
+    yield put({ type: actions.KICK_FAILURE, error })
+  }
+}
+
+export const kickUser = payload =>
+  axios.post(
+    `${ROOT_URL}/reservations/${payload.reservation}/kick`,
+    {
+      guestId: payload.guest
+    },
+    { headers: { 'x-access-token': payload.token } }
+  )
+// ^ kick a user ^ //
+
 export default function * rootSaga () {
   yield all([
     loginWatcher(),
@@ -148,6 +175,7 @@ export default function * rootSaga () {
     tablesWatcher(),
     makeReservationWatcher(),
     fetchMyReservationWatcher(),
-    inviteUserWatcher()
+    inviteUserWatcher(),
+    kickUserWatcher()
   ])
 }

@@ -22,6 +22,10 @@ export const INVITE_REQUEST = 'INVITE_REQUEST'
 export const INVITE_SUCCESS = 'INVITE_SUCCESS'
 export const INVITE_FAILURE = 'INVITE_FAILURE'
 
+export const KICK_REQUEST = 'KICK_REQUEST'
+export const KICK_SUCCESS = 'KICK_SUCCESS'
+export const KICK_FAILURE = 'KICK_FAILURE'
+
 export const LOGOUT = 'LOGOUT'
 export const MAKE_RESERVATION = 'MAKE_RESERVATION'
 export const ORDER = 'ORDER'
