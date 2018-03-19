@@ -168,6 +168,16 @@ export const kickUser = payload =>
   )
 // ^ kick a user ^ //
 
+// v clear reservations v //
+function * clearReservationsWatcher () {
+  yield takeEvery(actions.CLEAR_RESERVATIONS_REQUEST, clearReservationsWorker)
+}
+
+function * clearReservationsWorker () {
+  yield put({ type: actions.CLEAR_RESERVATIONS })
+}
+// ^ clear reservations ^ //
+
 export default function * rootSaga () {
   yield all([
     loginWatcher(),
@@ -176,6 +186,7 @@ export default function * rootSaga () {
     makeReservationWatcher(),
     fetchMyReservationWatcher(),
     inviteUserWatcher(),
-    kickUserWatcher()
+    kickUserWatcher(),
+    clearReservationsWatcher()
   ])
 }

@@ -15,6 +15,9 @@ const reservationReducer = (state = INITIAL_STATE, action) => {
     case actions.FETCH_MY_RESERVATION_FAILURE:
     case actions.MAKE_RESERVATION_FAILURE:
       return { ...state, error: action.error.response.data }
+
+    case actions.CLEAR_RESERVATIONS:
+      return INITIAL_STATE
     default:
       return state
   }

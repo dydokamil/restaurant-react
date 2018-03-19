@@ -19,6 +19,7 @@ class SignInForm extends React.Component {
 
   componentWillReceiveProps = props => {
     if (props.session.token) {
+      this.props.onClearReservations()
       this.props.history.push(routes.HOME)
     }
   }
@@ -67,6 +68,9 @@ class SignInForm extends React.Component {
 const mapDispatchToProps = dispatch => ({
   onSubmitSignIn: credentials => {
     dispatch({ type: actions.LOGIN_REQUEST, credentials })
+  },
+  onClearReservations: () => {
+    dispatch({ type: actions.CLEAR_RESERVATIONS_REQUEST })
   }
 })
 

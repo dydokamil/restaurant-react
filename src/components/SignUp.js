@@ -15,7 +15,8 @@ class SignUpForm extends React.Component {
 
   componentWillReceiveProps = props => {
     if (props.session.token) {
-      this.props.history.push(routes.HOME)
+      this.props.onClearReservations()
+      this.props.this.props.history.push(routes.HOME)
     }
   }
 
@@ -73,6 +74,9 @@ class SignUpForm extends React.Component {
 const mapDispatchToProps = dispatch => ({
   onSubmitSignUpForm: credentials => {
     dispatch({ type: actions.SIGNUP_REQUEST, credentials })
+  },
+  onClearReservations: () => {
+    dispatch({ type: actions.CLEAR_RESERVATIONS_REQUEST })
   }
 })
 

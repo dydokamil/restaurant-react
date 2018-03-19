@@ -25,6 +25,7 @@ class MyReservations extends React.Component {
 
     return (
       <div className="container">
+        <h1>Your reservations</h1>
         {error && <div>{error}</div>}
         {reservation && (
           <ReservationDetails

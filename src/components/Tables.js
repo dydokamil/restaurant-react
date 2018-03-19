@@ -22,11 +22,12 @@ class Tables extends React.Component {
   }
 
   render () {
-    if (!this.props.tables) {
+    const { tables } = this.props.tables
+
+    if (!tables) {
       return <div>Loading...</div>
     }
 
-    const { tables } = this.props.tables
     const tableKeys = Object.keys(tables)
 
     return (
