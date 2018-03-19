@@ -7,6 +7,7 @@ import * as actions from '../constants/actions'
 class Tables extends React.Component {
   componentDidMount = () => {
     this.props.onFetchTables()
+    this.props.onClearReservations()
   }
 
   onMakeReservation = (event, table, time) => {
@@ -86,6 +87,9 @@ const mapDispatchToProps = dispatch => ({
   },
   onMakeReservation: reservationDetails => {
     dispatch({ type: actions.MAKE_RESERVATION_REQUEST, reservationDetails })
+  },
+  onClearReservations: () => {
+    dispatch({ type: actions.CLEAR_RESERVATIONS_REQUEST })
   }
 })
 
