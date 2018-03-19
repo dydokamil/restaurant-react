@@ -9,25 +9,57 @@ class Tables extends React.Component {
     this.props.onFetchTables()
   }
 
+  onMakeReservation = (event, table, time) => {
+    event.target.disabled = true
+    const token = this.props.session.token
+    this.props.onMakeReservation({ table, time, token })
+  }
+
+  componentWillReceiveProps = props => {
+    if (this.props.reservation !== props.reservation) {
+      this.props.onFetchTables()
+    }
+  }
+
   render () {
-    console.log(this.props)
     if (!this.props.tables) {
       return <div>Loading...</div>
     }
 
-    const tableKeys = Object.keys(this.props.tables)
+    const { tables } = this.props.tables
+    const tableKeys = Object.keys(tables)
 
     return (
       <div className="container">
         <h1>Available reservations</h1>
+        {this.props.reservation &&
+          this.props.reservation.error && (
+          <div>{this.props.reservation.error}</div>
+        )}
         {tableKeys.map(tableKey => {
           return (
-            <div>
+            <div key={tableKey}>
               <h2>Table {tableKey}</h2>
               <ul>
-                {this.props.tables[tableKey].map(hour => {
+                {tables[tableKey].map(hour => {
                   return (
-                    <li>{moment.utc(hour).format('HH:mm, D MMMM YYYY')}</li>
+                    <li key={`${tableKey}${hour}`}>
+                      {moment.utc(hour).format('HH:mm, D MMMM')}{' '}
+                      {this.props.session.token && (
+                        <button
+                          className="reservation-btn"
+                          onClick={event =>
+                            this.onMakeReservation(
+                              event,
+                              tableKey,
+                              moment.utc(hour).format()
+                            )
+                          }
+                        >
+                          Make reservation
+                        </button>
+                      )}
+                    </li>
                   )
                 })}
               </ul>
@@ -41,13 +73,18 @@ class Tables extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    tables: state.tablesReducer
+    tables: state.tablesReducer,
+    session: state.sessionReducer,
+    reservation: state.reservationReducer
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   onFetchTables: () => {
     dispatch({ type: actions.TABLES_REQUEST })
+  },
+  onMakeReservation: reservationDetails => {
+    dispatch({ type: actions.MAKE_RESERVATION_REQUEST, reservationDetails })
   }
 })
 

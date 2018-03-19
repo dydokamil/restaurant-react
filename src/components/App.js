@@ -9,8 +9,8 @@ import SignIn from './SignIn'
 import SignUp from './SignUp'
 import Account from './Account'
 import Tables from './Tables'
+import MyReservations from './MyReservations'
 import * as routes from '../constants/routes'
-import * as actions from '../constants/actions'
 
 class App extends React.Component {
   render () {
@@ -26,6 +26,11 @@ class App extends React.Component {
           <Route exact path={routes.SIGN_UP} component={SignUp} />
           <Route exact path={routes.ACCOUNT} component={Account} />
           <Route exact path={routes.TABLES} component={Tables} />
+          <Route
+            exact
+            path={routes.MY_RESERVATIONS}
+            component={MyReservations}
+          />
         </React.Fragment>
       </BrowserRouter>
     )

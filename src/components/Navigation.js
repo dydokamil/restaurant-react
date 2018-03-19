@@ -39,12 +39,17 @@ class Navigation extends React.Component {
           )}
           {this.state.authenticated && (
             <li>
-              <SignOutButton />
+              <Link to={routes.MY_RESERVATIONS}>My reservations</Link>
             </li>
           )}
           <li>
             <Link to={routes.TABLES}>Tables</Link>
           </li>
+          {this.state.authenticated && (
+            <li>
+              <SignOutButton />
+            </li>
+          )}
         </ul>
       </div>
     )

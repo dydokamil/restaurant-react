@@ -66,6 +66,62 @@ export const fetchTables = () => {
 }
 // ^ fetch tables saga ^ //
 
+// v make a reservation v //
+export function * makeReservationWatcher () {
+  yield takeEvery(actions.MAKE_RESERVATION_REQUEST, makeReservationWorker)
+}
+
+export function * makeReservationWorker ({ reservationDetails }) {
+  try {
+    const reservation = yield call(makeReservation, reservationDetails)
+    yield put({ type: actions.MAKE_RESERVATION_SUCCESS, reservation })
+  } catch (error) {
+    yield put({ type: actions.MAKE_RESERVATION_FAILURE, error })
+  }
+}
+
+export const makeReservation = reservation => {
+  return axios.post(
+    `${ROOT_URL}/reservations`,
+    {
+      time: reservation.time,
+      table: reservation.table
+    },
+    { headers: { 'x-access-token': reservation.token } }
+  )
+}
+// ^ make a reservation ^ //
+
+// v fetch my reservation v //
+export function * fetchMyReservationWatcher () {
+  yield takeEvery(
+    actions.FETCH_MY_RESERVATION_REQUEST,
+    fetchMyReservationWorker
+  )
+}
+
+export function * fetchMyReservationWorker ({ token }) {
+  try {
+    const reservation = yield call(fetchMyReservation, token)
+    yield put({ type: actions.FETCH_MY_RESERVATION_SUCCESS, reservation })
+  } catch (error) {
+    yield put({ type: actions.FETCH_MY_RESERVATION_FAILURE, error })
+  }
+}
+
+export const fetchMyReservation = token => {
+  return axios.get(`${ROOT_URL}/reservations/mine`, {
+    headers: { 'x-access-token': token }
+  })
+}
+// ^ fetch my reservation ^ //
+
 export default function * rootSaga () {
-  yield all([loginWatcher(), signupWatcher(), tablesWatcher()])
+  yield all([
+    loginWatcher(),
+    signupWatcher(),
+    tablesWatcher(),
+    makeReservationWatcher(),
+    fetchMyReservationWatcher()
+  ])
 }
