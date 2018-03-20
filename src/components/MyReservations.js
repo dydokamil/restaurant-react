@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 
 import Invitation from './Invitation'
 import * as actions from '../constants/actions'
@@ -14,6 +15,16 @@ class MyReservations extends React.Component {
   kick = (reservation, guest) => {
     const payload = { reservation, guest, token: this.props.session.token }
     this.props.onKick(payload)
+  }
+
+  cancel = reservation => {
+    const payload = { reservation, token: this.props.session.token }
+    this.props.onCancel(payload)
+  }
+
+  cancelInvitation = reservation => {
+    const payload = { reservation, token: this.props.session.token }
+    this.props.onCancelInvitation(payload)
   }
 
   render () {
@@ -32,6 +43,8 @@ class MyReservations extends React.Component {
             session={this.props.session}
             reservation={reservation}
             kick={this.kick}
+            cancel={this.cancel}
+            cancelInvitation={this.cancelInvitation}
           />
         )}
       </div>
@@ -41,7 +54,9 @@ class MyReservations extends React.Component {
 
 const ReservationDetails = props => (
   <React.Fragment>
-    <div>Time: {props.reservation.time}</div>
+    <div>
+      Time: {moment.utc(props.reservation.time).format('HH:mm, D MMMM')}
+    </div>
     <div>Table: {props.reservation.table}</div>
     <div>Creator: {props.reservation.user}</div>
     <div>
@@ -68,9 +83,25 @@ const ReservationDetails = props => (
       )}
     </div>
 
+    {props.session.id === props.reservation.user ? (
+      <button onClick={() => props.cancelInvitation(props.reservation._id)}>
+        Cancel reservatation
+      </button>
+    ) : (
+      <button
+        onClick={() => {
+          props.cancelInvitation(props.reservation._id)
+        }}
+      >
+        Not going
+      </button>
+    )}
+
     {props.session.id === props.reservation.user &&
       props.reservation.guests.length < 4 && (
-      <Invitation reservationId={props.reservation._id} />
+      <div>
+        <Invitation reservationId={props.reservation._id} />
+      </div>
     )}
 
     <hr />
@@ -90,6 +121,12 @@ const mapDispatchToProps = dispatch => ({
   },
   onKick: payload => {
     dispatch({ type: actions.KICK_REQUEST, payload })
+  },
+  onCancel: payload => {
+    dispatch({ type: actions.CANCEL_RESERVATION_REQUEST, payload })
+  },
+  onCancelInvitation: payload => {
+    dispatch({ type: actions.CANCEL_INVITATION_REQUEST, payload })
   }
 })
 

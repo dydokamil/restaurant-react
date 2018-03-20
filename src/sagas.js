@@ -169,14 +169,64 @@ export const kickUser = payload =>
 // ^ kick a user ^ //
 
 // v clear reservations v //
-function * clearReservationsWatcher () {
+export function * clearReservationsWatcher () {
   yield takeEvery(actions.CLEAR_RESERVATIONS_REQUEST, clearReservationsWorker)
 }
 
-function * clearReservationsWorker () {
+export function * clearReservationsWorker () {
   yield put({ type: actions.CLEAR_RESERVATIONS })
 }
 // ^ clear reservations ^ //
+
+// v cancel reservation v //
+export function * cancelReservationWatcher () {
+  yield takeEvery(actions.CANCEL_RESERVATION_REQUEST, cancelReservationWorker)
+}
+
+export function * cancelReservationWorker ({ payload }) {
+  try {
+    yield call(cancelReservation, payload)
+    yield put({
+      type: actions.CANCEL_RESERVATION_SUCCESS,
+      reservation: { data: null }
+    })
+  } catch (error) {
+    yield put({ type: actions.CANCEL_RESERVATION_FAILURE, error })
+  }
+}
+
+export const cancelReservation = payload =>
+  axios.post(
+    `${ROOT_URL}/reservations/${payload.reservation}/cancel`,
+    {},
+    { headers: { 'x-access-token': payload.token } }
+  )
+// ^ cancel reservation ^ //
+
+// v cancel invitation v //
+export function * cancelInvitationWatcher () {
+  yield takeEvery(actions.CANCEL_INVITATION_REQUEST, cancelInvitationWorker)
+}
+
+export function * cancelInvitationWorker ({ payload }) {
+  try {
+    yield call(cancelInvitation, payload)
+    yield put({
+      type: actions.CANCEL_INVITATION_SUCCESS,
+      reservation: { data: null }
+    })
+  } catch (error) {
+    yield put({ type: actions.CANCEL_INVITATION_FAILURE, error })
+  }
+}
+
+export const cancelInvitation = payload =>
+  axios.post(
+    `${ROOT_URL}/reservations/${payload.reservation}/not-going`,
+    {},
+    { headers: { 'x-access-token': payload.token } }
+  )
+// ^ cancel invitation ^ //
 
 export default function * rootSaga () {
   yield all([
@@ -187,6 +237,8 @@ export default function * rootSaga () {
     fetchMyReservationWatcher(),
     inviteUserWatcher(),
     kickUserWatcher(),
-    clearReservationsWatcher()
+    clearReservationsWatcher(),
+    cancelReservationWatcher(),
+    cancelInvitationWatcher()
   ])
 }
