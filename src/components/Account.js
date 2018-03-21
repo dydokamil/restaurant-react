@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 class Account extends React.Component {
   render () {
     return (
-      <div>
+      <div className="container">
         {this.props.session.token ? (
           <h1>Account: {this.props.session.username}</h1>
         ) : (

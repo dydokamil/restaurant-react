@@ -1,0 +1,35 @@
+.navbar {
+  background: rgba(211, 211, 211, 0.2);
+
+  /* display: flex; */
+  /* flex-direction: row; */
+  /* flex-flow: row; */
+  /* justify-content: flex-end; */
+
+  padding: 1rem;
+}
+
+.navbar > * {
+  display: flex;
+  /* padding-right: 1%; */
+}
+
+.nav-item:not(:last-child) {
+  margin-right: 1rem;
+}
+
+.logo {
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .nav-item {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-item {
+    display: unset;
+  }
+}
