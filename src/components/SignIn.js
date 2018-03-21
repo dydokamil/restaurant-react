@@ -13,14 +13,10 @@ import Dialog, {
 import * as routes from '../constants/routes'
 import * as actions from '../constants/actions'
 
-const INITIAL_STATE = { username: '', password: '', error: null, open: false }
+const INITIAL_STATE = { username: '', password: '', error: null }
 
 class SignInForm extends React.Component {
   state = INITIAL_STATE
-
-  handleClickOpen = () => {
-    this.setState({ open: true })
-  }
 
   handleClose = () => {
     this.setState({ error: null })

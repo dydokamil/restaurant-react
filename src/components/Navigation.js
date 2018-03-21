@@ -1,16 +1,12 @@
 import React from 'react'
-// import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-// import IconMenu from 'material-ui-icons/IconMenu'
-// import { MenuItem } from 'material-ui/Menu'
-// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import IconButton from 'material-ui/IconButton'
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import Typography from 'material-ui/Typography'
 import Toolbar from 'material-ui/Toolbar'
-import Button from 'material-ui/Button'
 import MenuIcon from 'material-ui-icons/Menu'
+import List, { ListItem, ListItemText } from 'material-ui/List'
 
 import * as routes from '../constants/routes'
 import * as actions from '../constants/actions'
@@ -44,9 +40,6 @@ class Navigation extends React.Component {
     },
     list: {
       width: 250
-    },
-    fullList: {
-      width: 'auto'
     }
   }
 
@@ -54,18 +47,27 @@ class Navigation extends React.Component {
     return (
       <React.Fragment>
         <Drawer open={this.state.open} onClose={() => this.toggleDrawer()}>
-          {this.state.authenticated ? (
-            <MenuLogged
-              history={this.props.history}
-              toggleDrawer={this.toggleDrawer}
-              onSignOut={this.props.onSignOut}
-            />
-          ) : (
-            <MenuLogin
-              history={this.props.history}
-              toggleDrawer={this.toggleDrawer}
-            />
-          )}
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={() => this.toggleDrawer(false)}
+            onKeyDown={() => this.toggleDrawer(false)}
+          >
+            {this.state.authenticated ? (
+              <MenuLogged
+                history={this.props.history}
+                toggleDrawer={this.toggleDrawer}
+                onSignOut={this.props.onSignOut}
+                styles={this.styles}
+              />
+            ) : (
+              <MenuLogin
+                history={this.props.history}
+                toggleDrawer={this.toggleDrawer}
+                styles={this.styles}
+              />
+            )}
+          </div>
         </Drawer>
 
         <SimpleAppBar toggleDrawer={this.toggleDrawer} classes={this.styles} />
@@ -95,87 +97,106 @@ const SimpleAppBar = props => (
 )
 
 const MenuLogged = props => (
-  <React.Fragment>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.HOME)
-      }}
-    >
-      Home
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.ACCOUNT)
-      }}
-    >
-      Account
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.TABLES)
-      }}
-    >
-      Tables
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.MY_RESERVATIONS)
-      }}
-    >
-      My Reservations
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.onSignOut()
-        props.history.push(routes.HOME)
-      }}
-    >
-      Sign Out
-    </Button>
-  </React.Fragment>
+  <div style={props.styles.list}>
+    <List>
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.HOME)
+        }}
+      >
+        <ListItemText primary="Home" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.ACCOUNT)
+        }}
+      >
+        <ListItemText primary="Account" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.TABLES)
+        }}
+      >
+        <ListItemText primary="Tables" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.MY_RESERVATIONS)
+        }}
+      >
+        <ListItemText primary="My Reservations" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.onSignOut()
+          props.history.push(routes.HOME)
+        }}
+      >
+        <ListItemText primary="Sign Out" />
+      </ListItem>
+    </List>
+  </div>
 )
 
 const MenuLogin = props => (
-  <React.Fragment>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.HOME)
-      }}
-    >
-      Home
-    </Button>
+  <div style={props.styles.list}>
+    <List>
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.HOME)
+        }}
+      >
+        <ListItemText primary="Home" />
+      </ListItem>
 
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.SIGN_IN)
-      }}
-    >
-      Sign In
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.SIGN_UP)
-      }}
-    >
-      Sign Up
-    </Button>
-    <Button
-      onClick={() => {
-        props.toggleDrawer()
-        props.history.push(routes.TABLES)
-      }}
-    >
-      Tables
-    </Button>
-  </React.Fragment>
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.SIGN_IN)
+        }}
+      >
+        <ListItemText primary="Sign In" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.SIGN_UP)
+        }}
+      >
+        <ListItemText primary="Sign Up" />
+      </ListItem>
+
+      <ListItem
+        button
+        onClick={() => {
+          props.toggleDrawer()
+          props.history.push(routes.TABLES)
+        }}
+      >
+        <ListItemText primary="Tables" />
+      </ListItem>
+    </List>
+  </div>
 )
 
 const mapStateToProps = state => {
