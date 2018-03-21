@@ -1,5 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import TextField from 'material-ui/TextField'
+import Button from 'material-ui/Button'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from 'material-ui/Dialog'
 
 import * as routes from '../constants/routes'
 import * as actions from '../constants/actions'
@@ -7,7 +15,8 @@ import * as actions from '../constants/actions'
 const INITIAL_STATE = {
   username: '',
   password1: '',
-  password2: ''
+  password2: '',
+  error: null
 }
 
 class SignUpForm extends React.Component {
@@ -18,6 +27,14 @@ class SignUpForm extends React.Component {
       this.props.onClearReservations()
       this.props.this.props.history.push(routes.HOME)
     }
+
+    if (props.session.error) {
+      this.setState({ error: props.session.error })
+    }
+  }
+
+  handleClose = () => {
+    this.setState({ error: null })
   }
 
   onSubmit = event => {
@@ -33,38 +50,61 @@ class SignUpForm extends React.Component {
       <div className="container">
         <h1>Sign Up</h1>
         <form onSubmit={this.onSubmit}>
-          <input
+          <TextField
             value={this.state.username}
             onChange={event => this.setState({ username: event.target.value })}
             type="text"
-            placeholder="Username"
+            label="Username"
+            fullWidth={true}
           />
-          <br />
-          <input
+          <TextField
             value={this.state.password1}
             onChange={event => this.setState({ password1: event.target.value })}
             type="password"
+            label="Password"
             placeholder="Password"
+            fullWidth={true}
           />
           <br />
-          <input
+          <TextField
             value={this.state.password2}
             onChange={event => this.setState({ password2: event.target.value })}
             type="password"
-            placeholder="Confirm Password"
+            label="Confirm Password"
+            fullWidth={true}
           />
-          <br />
-          <button
+          <Button
+            style={{ marginTop: '16px' }}
+            variant="raised"
             disabled={
               !this.state.password1 ||
               this.state.password1 !== this.state.password2 ||
               !this.state.username
             }
             type="submit"
+            color="primary"
           >
             Sign Up
-          </button>
-          {this.state.error && <p>{this.state.error.message}</p>}
+          </Button>
+          {this.state.error && (
+            <Dialog
+              open={!!this.state.error}
+              onClose={this.handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle>
+                <DialogContent>
+                  <DialogContentText>{this.state.error}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleClose} color="primary">
+                    OK
+                  </Button>
+                </DialogActions>
+              </DialogTitle>
+            </Dialog>
+          )}
         </form>
       </div>
     )

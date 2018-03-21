@@ -84,7 +84,7 @@ const ReservationDetails = props => (
     </div>
 
     {props.session.id === props.reservation.user ? (
-      <button onClick={() => props.cancelInvitation(props.reservation._id)}>
+      <button onClick={() => props.cancel(props.reservation._id)}>
         Cancel reservatation
       </button>
     ) : (

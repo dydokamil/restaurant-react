@@ -1,12 +1,16 @@
 import React from 'react'
 // import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import IconMenu from 'material-ui/IconMenu'
-import MenuItem from 'material-ui/MenuItem'
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+// import IconMenu from 'material-ui-icons/IconMenu'
+// import { MenuItem } from 'material-ui/Menu'
+// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import IconButton from 'material-ui/IconButton'
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
+import Typography from 'material-ui/Typography'
+import Toolbar from 'material-ui/Toolbar'
+import Button from 'material-ui/Button'
+import MenuIcon from 'material-ui-icons/Menu'
 
 import * as routes from '../constants/routes'
 import * as actions from '../constants/actions'
@@ -19,130 +23,158 @@ class Navigation extends React.Component {
     this.setState({ authenticated: props.session && props.session.token })
   }
 
-  handleToggle = () => this.setState({ open: !this.state.open })
-
   handleClose = () => this.setState({ open: false })
 
   openCloseDrawer = open => {
     this.setState({ open })
   }
 
+  toggleDrawer = () => this.setState({ open: !this.state.open })
+
+  styles = {
+    root: {
+      flexGrow: 1
+    },
+    flex: {
+      flex: 1
+    },
+    menuButton: {
+      marginLeft: -12,
+      marginRight: 20
+    },
+    list: {
+      width: 250
+    },
+    fullList: {
+      width: 'auto'
+    }
+  }
+
   render () {
     return (
       <React.Fragment>
-        <Drawer
-          onRequestChange={open => this.setState({ open })}
-          docked={false}
-          open={this.state.open}
-        >
+        <Drawer open={this.state.open} onClose={() => this.toggleDrawer()}>
           {this.state.authenticated ? (
             <MenuLogged
-              handleToggle={this.handleToggle}
-              onSignOut={this.props.onSignOut}
               history={this.props.history}
+              toggleDrawer={this.toggleDrawer}
+              onSignOut={this.props.onSignOut}
             />
           ) : (
-            <LoginMenu
-              handleToggle={this.handleToggle}
+            <MenuLogin
               history={this.props.history}
+              toggleDrawer={this.toggleDrawer}
             />
           )}
         </Drawer>
-        <AppBar
-          title="Restaurant"
-          onLeftIconButtonClick={() =>
-            this.setState({
-              open: !this.state.open
-            })
-          }
-        />
+
+        <SimpleAppBar toggleDrawer={this.toggleDrawer} classes={this.styles} />
       </React.Fragment>
     )
   }
 }
 
+const SimpleAppBar = props => (
+  <div className={props.classes.root}>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton
+          onClick={props.toggleDrawer}
+          style={props.classes.menuButton}
+          color="inherit"
+          aria-label="Menu"
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="title" color="inherit" style={props.classes.flex}>
+          Restaurant
+        </Typography>
+      </Toolbar>
+    </AppBar>
+  </div>
+)
+
 const MenuLogged = props => (
   <React.Fragment>
-    <MenuItem
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.HOME)
       }}
     >
       Home
-    </MenuItem>
-
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.ACCOUNT)
       }}
     >
       Account
-    </MenuItem>
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.TABLES)
       }}
     >
       Tables
-    </MenuItem>
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.MY_RESERVATIONS)
       }}
     >
       My Reservations
-    </MenuItem>
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.onSignOut()
         props.history.push(routes.HOME)
       }}
     >
       Sign Out
-    </MenuItem>
+    </Button>
   </React.Fragment>
 )
 
-const LoginMenu = props => (
+const MenuLogin = props => (
   <React.Fragment>
-    <MenuItem
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.HOME)
       }}
     >
       Home
-    </MenuItem>
+    </Button>
 
-    <MenuItem
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.SIGN_IN)
       }}
     >
       Sign In
-    </MenuItem>
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.SIGN_UP)
       }}
     >
       Sign Up
-    </MenuItem>
-    <MenuItem
+    </Button>
+    <Button
       onClick={() => {
-        props.handleToggle()
+        props.toggleDrawer()
         props.history.push(routes.TABLES)
       }}
     >
       Tables
-    </MenuItem>
+    </Button>
   </React.Fragment>
 )
 
