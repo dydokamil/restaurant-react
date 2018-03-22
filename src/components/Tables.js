@@ -5,12 +5,18 @@ import TextField from 'material-ui/TextField'
 import MenuItem from 'material-ui/Menu/MenuItem'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
 import Button from 'material-ui/Button'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
 
 import * as actions from '../constants/actions'
 
 class Tables extends React.Component {
-  state = { time: '' }
+  state = { time: '', success: false, error: null }
 
   componentDidMount = () => {
     this.props.onFetchTables()
@@ -18,21 +24,24 @@ class Tables extends React.Component {
   }
 
   makeReservation = (table, time) => {
-    // const time = (this.state.event.target.disabled = true)
-    console.log('HERE IN MY GARAGE')
-    console.log(table)
-    console.log(time)
-
-    console.log({ table, time })
     const token = this.props.session.token
     this.props.onMakeReservation({ table, time, token })
   }
 
   componentWillReceiveProps = props => {
-    if (this.props.reservation !== props.reservation) {
+    if (this.props.reservationInfo !== props.reservationInfo) {
       this.props.onFetchTables()
+
+      if (props.reservationInfo.error) {
+        this.setState({ error: props.reservationInfo.error })
+      } else if (props.reservationInfo.reservation) {
+        this.setState({ success: true })
+      }
     }
   }
+
+  dismissSuccess = () => this.setState({ success: false })
+  dismissError = () => this.setState({ error: null })
 
   render () {
     const { tables } = this.props.tables
@@ -46,10 +55,7 @@ class Tables extends React.Component {
     return (
       <div className="container">
         <h1>Available reservations</h1>
-        {this.props.reservation &&
-          this.props.reservation.error && (
-          <div>{this.props.reservation.error}</div>
-        )}
+
         {tableKeys.map(tableKey => {
           return (
             <Table
@@ -61,6 +67,47 @@ class Tables extends React.Component {
             />
           )
         })}
+        {this.state.success ? (
+          <Dialog
+            open={!!this.state.success}
+            onClose={this.dismissSuccess}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  {'You have successfully made a reservation.'}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.dismissSuccess} color="primary">
+                  OK
+                </Button>
+              </DialogActions>
+            </DialogTitle>
+          </Dialog>
+        ) : (
+          this.state.error && (
+            <Dialog
+              open={!!this.state.error}
+              onClose={this.dismissError}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle>
+                <DialogContent>
+                  <DialogContentText>{this.state.error}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.dismissError} color="primary">
+                    OK
+                  </Button>
+                </DialogActions>
+              </DialogTitle>
+            </Dialog>
+          )
+        )}
       </div>
     )
   }
@@ -140,7 +187,7 @@ const mapStateToProps = state => {
   return {
     tables: state.tablesReducer,
     session: state.sessionReducer,
-    reservation: state.reservationReducer
+    reservationInfo: state.reservationReducer
   }
 }
 
