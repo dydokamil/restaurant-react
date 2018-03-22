@@ -1,16 +1,50 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import Card, { CardContent, CardActions } from 'material-ui/Card'
+import Button from 'material-ui/Button'
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from 'material-ui/Dialog'
+import List, {
+  ListItem,
+  ListItemAvatar,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText
+} from 'material-ui/List'
+import Typography from 'material-ui/Typography'
+import IconButton from 'material-ui/IconButton'
+import DeleteIcon from 'material-ui-icons/Delete'
 
 import Invitation from './Invitation'
 import * as actions from '../constants/actions'
 
 class MyReservations extends React.Component {
+  state = { cancelled: false, showInvite: false, error: null }
+
   componentDidMount = () => {
     if (this.props.session.token) {
       this.props.onFetchMyReservation(this.props.session.token)
     }
   }
+
+  componentWillReceiveProps = props => {
+    if (this.props.reservation.reservation && !props.reservation.reservation) {
+      this.setState({ cancelled: true })
+    }
+
+    if (props.reservation.error) {
+      this.setState({ error: props.reservation.error })
+    }
+  }
+
+  dismissError = () => this.setState({ error: null })
+
+  dismissCancelled = () => this.setState({ cancelled: false })
 
   kick = (reservation, guest) => {
     const payload = { reservation, guest, token: this.props.session.token }
@@ -27,17 +61,18 @@ class MyReservations extends React.Component {
     this.props.onCancelInvitation(payload)
   }
 
+  showInviteDialog = show => this.setState({ showInvite: show })
+
   render () {
     if (!this.props.session.token) {
-      return <div className="container">Plase sign in.</div>
+      return <div className="container">Please sign in.</div>
     }
 
-    const { reservation, error } = this.props.reservation
+    const { reservation } = this.props.reservation
 
     return (
       <div className="container">
         <h1>Your reservations</h1>
-        {error && <div>{error}</div>}
         {reservation && (
           <ReservationDetails
             session={this.props.session}
@@ -45,68 +80,144 @@ class MyReservations extends React.Component {
             kick={this.kick}
             cancel={this.cancel}
             cancelInvitation={this.cancelInvitation}
+            showInviteDialog={this.showInviteDialog}
           />
+        )}
+        <Dialog
+          open={!!this.state.cancelled}
+          onClose={this.dismissCancelled}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {'You have successfully cancelled the event.'}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.dismissCancelled} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </DialogTitle>
+        </Dialog>
+        {this.state.showInvite && (
+          <Invitation
+            reservationId={reservation._id}
+            showInviteDialog={this.showInviteDialog}
+          />
+        )}
+        {this.state.error && (
+          <Dialog
+            open={!!this.state.error}
+            onClose={this.dismissError}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle>
+              <DialogContent>
+                <DialogContentText>{this.state.error}</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.dismissError} color="primary">
+                  OK
+                </Button>
+              </DialogActions>
+            </DialogTitle>
+          </Dialog>
         )}
       </div>
     )
   }
 }
 
-const ReservationDetails = props => (
-  <React.Fragment>
-    <div>
-      Time: {moment.utc(props.reservation.time).format('HH:mm, D MMMM')}
-    </div>
-    <div>Table: {props.reservation.table}</div>
-    <div>Creator: {props.reservation.user}</div>
-    <div>
-      Guests:{' '}
-      {props.reservation.guests.length > 0 ? (
-        <ul>
-          {props.reservation.guests.map(guest => (
-            <li key={guest}>
-              <div>
-                {guest}{' '}
-                {props.session.id === props.reservation.user && (
-                  <button
-                    onClick={() => props.kick(props.reservation._id, guest)}
-                  >
-                    Kick
-                  </button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        'No guests'
-      )}
-    </div>
+class ReservationDetails extends React.Component {
+  styles = {
+    card: {
+      minWidth: 275,
+      marginBottom: '16px'
+    },
+    textField: {
+      flexBasis: 200
+    },
+    pos: {
+      marginBottom: 12
+    }
+  }
 
-    {props.session.id === props.reservation.user ? (
-      <button onClick={() => props.cancel(props.reservation._id)}>
-        Cancel reservatation
-      </button>
-    ) : (
-      <button
-        onClick={() => {
-          props.cancelInvitation(props.reservation._id)
-        }}
-      >
-        Not going
-      </button>
-    )}
+  render () {
+    return (
+      <Card style={this.styles.card}>
+        <CardContent>
+          <Typography>
+            Time:{' '}
+            {moment.utc(this.props.reservation.time).format('HH:mm, D MMMM')}
+          </Typography>
+          <Typography>Table: {this.props.reservation.table}</Typography>
+          <Typography>Creator: {this.props.reservation.user}</Typography>
+          <Typography>
+            {this.props.reservation.guests.length > 0 ? (
+              <List>
+                Guests:{' '}
+                {this.props.reservation.guests.map(guest => (
+                  <ListItem>
+                    <ListItemText primary={guest} />
+                    {this.props.reservation.user === this.props.session.id && (
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          onClick={() =>
+                            this.props.kick(this.props.reservation._id, guest)
+                          }
+                          aria-label="Delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    )}
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              'No guests'
+            )}
+          </Typography>
+        </CardContent>
 
-    {props.session.id === props.reservation.user &&
-      props.reservation.guests.length < 4 && (
-      <div>
-        <Invitation reservationId={props.reservation._id} />
-      </div>
-    )}
-
-    <hr />
-  </React.Fragment>
-)
+        {this.props.session.id === this.props.reservation.user ? (
+          <CardActions>
+            <Button
+              color="primary"
+              onClick={() => this.props.cancel(this.props.reservation._id)}
+              size="small"
+            >
+              Cancel reservatation
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => this.props.showInviteDialog(true)}
+              size="small"
+            >
+              Invite
+            </Button>
+          </CardActions>
+        ) : (
+          <CardActions>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                this.props.cancelInvitation(this.props.reservation._id)
+              }}
+            >
+              Not going
+            </Button>
+          </CardActions>
+        )}
+      </Card>
+    )
+  }
+}
 
 const mapStateToProps = state => {
   return {

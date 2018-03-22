@@ -162,6 +162,7 @@ class Table extends React.Component {
         <CardActions>
           {this.props.authenticated && (
             <Button
+              color="primary"
               onClick={() =>
                 this.props.makeReservation(this.state.table, this.state.time)
               }
