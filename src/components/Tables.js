@@ -130,7 +130,7 @@ class Table extends React.Component {
   table = this.props.table
 
   handleChange = event => {
-    this.setState({ time: event.target.value }, () => console.log(this.state))
+    this.setState({ time: event.target.value })
   }
 
   render () {

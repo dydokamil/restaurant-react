@@ -3,7 +3,8 @@ import axios from 'axios'
 
 import * as actions from './constants/actions'
 
-const ROOT_URL = 'http://localhost:3000'
+// const ROOT_URL = 'http://localhost:3000'
+const ROOT_URL = 'https://node-restaurant.herokuapp.com'
 
 // v login saga v //
 // watcher
