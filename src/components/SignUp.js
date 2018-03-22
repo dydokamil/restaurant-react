@@ -25,7 +25,7 @@ class SignUpForm extends React.Component {
   componentWillReceiveProps = props => {
     if (props.session.token) {
       this.props.onClearReservations()
-      this.props.this.props.history.push(routes.HOME)
+      this.props.history.push(routes.HOME)
     }
 
     if (props.session.error) {
