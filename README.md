@@ -13,4 +13,4 @@ https://react-restaurant.herokuapp.com/
 
 ## Invite a friend
 
-![Invite a friend](https://github.com/dydokamil/restaurant-react/blob/master/showcase/invite.png?raw=true)
+![Invite a friend](https://github.com/dydokamil/restaurant-react/blob/master/showcase/intive.png?raw=true)
